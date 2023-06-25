@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Country Autocomplete Example</title>
+    <style>
+        #country-results {
+            margin-top: 10px;
+        }
+
+        #country-results div {
+            cursor: pointer;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Country Autocomplete Example</h1>
+    <form>
+        <input type="text" id="country-input" autocomplete="off">
+        <div id="country-results"></div>
+    </form>
+
+    <script>
+        var inputField = document.getElementById('country-input');
+        var resultsContainer = document.getElementById('country-results');
+
+        inputField.addEventListener('input', function() {
+            var query = inputField.value;
+
+            if (query.length >= 2) {
+                fetch('/country-autocomplete/?q=' + query)
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        resultsContainer.innerHTML = '';
+                        data.forEach(function(country) {
+                            var countryElement = document.createElement('div');
+                            countryElement.innerText = country.name;
+                            countryElement.addEventListener('click', function() {
+                                inputField.value = country.name;
+                                resultsContainer.innerHTML = '';
+                            });
+                            resultsContainer.appendChild(countryElement);
+                        });
+                    });
+            } else {
+                resultsContainer.innerHTML = '';
+            }
+        });
+    </script>
+</body>
+</html>
